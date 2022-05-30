@@ -8,7 +8,7 @@ from pathlib import Path
 from github import Github
 from datetime import datetime, timezone
 from openpecha.utils import load_yaml, dump_yaml
-from openpecha.core.layer import PechaMetaData, InitialCreationEnum
+from openpecha.core.metadata import InitialCreationType, DiplomaticPechaMetadata
 
 
 def get_initial_date(pecha_path, token):
@@ -51,13 +51,14 @@ def update_meta(pecha_path, base_dic, parser, token):
     meta_path = Path(f"{pecha_path}/{pecha_id}.opf/meta.yml")
     meta = load_yaml(meta_path)
     source_metadata = get_new_source_metadata(meta, base_dic)
-    new_meta = PechaMetaData(
-        id=meta['id'],
+    new_meta = DiplomaticPechaMetadata(
         source='https://library.bdrc.io',
-        initial_creation_type=InitialCreationEnum.ocr,
+        initial_creation_type=InitialCreationType.ocr,
         imported=get_initial_date(pecha_path, token),
         last_modified=datetime.now(timezone.utc),
         parser=parser,
+        copyright=None,
+        license=None,
         source_metadata=source_metadata
     )
     dump_yaml(json.loads(new_meta.json()), meta_path)

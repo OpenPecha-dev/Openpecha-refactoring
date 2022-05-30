@@ -4,7 +4,6 @@ from pathlib import Path
 from turtle import down
 from openpecha import *
 from openpecha.utils import load_yaml, dump_yaml
-from openpecha.core.ids import get_pecha_id
 from openpecha.github_utils import create_github_repo
 
 
@@ -39,7 +38,8 @@ def rename_opf_dir_name(new_pecha_id, pecha_path):
 
     
 def update_repo_name(pecha_path, token):
-    new_pecha_id = get_pecha_id()
+    meta = load_yaml(Path(f"{pecha_path}/{pecha_path.name}.opf/meta.yml"))
+    new_pecha_id = meta['id']
     rename_opf_dir_name(new_pecha_id, pecha_path)
     rename_meta(new_pecha_id, pecha_path)
     update_readme(new_pecha_id, pecha_path)
