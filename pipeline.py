@@ -172,15 +172,12 @@ def update_pedurma_pechas(parser, token):
 
 
 if __name__ == "__main__":
-    token = "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"
+    token = ""
     pedurma_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/a7eec5e12ddce18d0ed1dbb732a42cf48f94dd09/openpecha/formatters/hfml.py"
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
     update_pedurma_pechas(pedurma_parser, token)
 
 
-# new = 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
-
-# old =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
 
 #  special cases updated earlier than final conventions
 # D1109
