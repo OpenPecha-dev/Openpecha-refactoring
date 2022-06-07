@@ -8,7 +8,9 @@ from pathlib import Path
 from github import Github
 from datetime import datetime, timezone
 from openpecha.utils import load_yaml, dump_yaml
-from openpecha.core.metadata import InitialCreationType, DiplomaticPechaMetadata
+from openpecha.core.metadata import InitialCreationType, InitialPechaMetadata
+from openpecha.core.ids import get_base_id
+
 
 
 def get_initial_date(pecha_path, token):
@@ -44,14 +46,14 @@ def get_new_source_metadata(meta, base_dic):
                 break
         source_metadata['base'] = base
     return source_metadata
-    
+
 
 def update_meta(pecha_path, base_dic, parser, token):
     pecha_id = pecha_path.name
     meta_path = Path(f"{pecha_path}/{pecha_id}.opf/meta.yml")
     meta = load_yaml(meta_path)
     source_metadata = get_new_source_metadata(meta, base_dic)
-    new_meta = DiplomaticPechaMetadata(
+    new_meta = InitialPechaMetadata(
         source='https://library.bdrc.io',
         initial_creation_type=InitialCreationType.ocr,
         imported=get_initial_date(pecha_path, token),
@@ -73,10 +75,6 @@ def rename_layers(layers_paths, base_dic):
                 new_base = info['new_base']
                 break
         subprocess.run(f'cd {layer_path.parent}; git mv {layer_path.name} {new_base}', shell=True)
-        
-        
-def get_base_id():
-    return "".join(random.choices(uuid4().hex, k=4)).lower()
 
 
 def rename_all_base(base_paths):

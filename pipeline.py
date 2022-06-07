@@ -8,6 +8,7 @@ from github import Github
 from urllib.request import urlopen
 from rename_repo_name import update_repo_name
 from update_index import update_index_base
+from openpecha.utils import load_yaml
 from update_pecha_base_and_meta import update_base_and_layer_name, update_meta
 
 
@@ -17,7 +18,7 @@ t_text_list_dictionary = json.loads(response.read())
 
 
 logging.basicConfig(
-    filename="pecha_id_changed.log",
+    filename="ocr_pecha_id_changed.log",
     format="%(levelname)s: %(message)s",
     level=logging.INFO,
 )
@@ -125,60 +126,59 @@ def download_pecha(pecha_id, out_path=None, branch="master"):
 
 def reformat_opf(pecha_path, parser, token):
     pecha_base_dic = update_base_and_layer_name(pecha_path)
-    update_index_base(pecha_path, pecha_base_dic)
     update_meta(pecha_path, pecha_base_dic, parser, token)
     new_pecha_id = update_repo_name(pecha_path, token)
     return new_pecha_id
 
 
-def update_pedurma_pechas(parser, token):
-    curr = {}
+def update_pedurma_pechas(token):
     text_list = {}
+    parser = ""
     commit_msg = "updated base name and meta.yml"
     commit_msg = "pecha refomated"
-    text_list = (Path(f"./text_list.txt").read_text(encoding='utf-8')).splitlines()
+    text_list = ["D1109", "D1115"]
     output_path = Path(f"./pedurma_pechas/")
     for text_id, info in t_text_list_dictionary.items():
         if text_id in text_list:
-            continue 
-        google_id = info['google']
-        namsel_id = info['namsel']
-        google_path = download_pecha(google_id, output_path)
-        namsel_path = download_pecha(namsel_id, output_path)
-        new_google_id = reformat_opf(google_path, parser, token)
-        new_namsel_id = reformat_opf(namsel_path, parser, token)
-        push_changes(namsel_path, commit_msg, token)
-        notifier(f"{namsel_id} is {new_namsel_id}")
-        time.sleep(30) 
-        push_changes(google_path, commit_msg, token)
-        notifier(f"{google_id} is {new_google_id}")
-        time.sleep(30)
-        notifier(f"{text_id} is done")
-        clean_dir(google_path)
-        clean_dir(namsel_path)
+            google_id = info['google']
+            namsel_id = info['namsel']
+            google_path = download_pecha(google_id, output_path)
+            namsel_path = download_pecha(namsel_id, output_path)
+            new_google_id = reformat_opf(google_path, parser, token)
+            new_namsel_id = reformat_opf(namsel_path, parser, token)
+            push_changes(namsel_path, commit_msg, token)
+            notifier(f"{namsel_id} is {new_namsel_id}")
+            time.sleep(30) 
+            push_changes(google_path, commit_msg, token)
+            notifier(f"{google_id} is {new_google_id}")
+            time.sleep(30)
+            notifier(f"{text_id} is done")
+            clean_dir(google_path)
+            clean_dir(namsel_path)
+    
+            
+def check_initial_creation_type(pecha_path):
+    meta = load_yaml(Path(f"{pecha_path}/{pecha_path.name}.opf/meta.yml"))
+    if meta['initial_creation_type'] == "ocr":
+        return True
+    else:
+        return False
+    
+    
+def update_ocr_pechas(batch_num, parser, token):
+    pecha_ids = (Path(f"./ocr-batches/{batch_num}.txt").read_text(encoding='utf-8')).splitlines()
+    output_path = "./pechas"
+    commit_msg = "updated to the new formate"
+    for pecha_id in pecha_ids:
+        pecha_path = download_pecha(pecha_id, output_path)
+        check = check_initial_creation_type(pecha_path)
+        if check == True:
+            new_pecha_id = reformat_opf(pecha_path, parser, token)
+            push_changes(pecha_path, commit_msg, token)
+            notifier(f"{pecha_id} is {new_pecha_id}")
         
-    #     curr[text_id] = {
-    #         'google': new_google_id,
-    #         'namsel': new_namsel_id,
-    #         'title': info['title']
-    #         }
-    #     text_list.update(curr)
-    #     curr = {}
-    # final_json = json.dumps(text_list, sort_keys=True, ensure_ascii=False)
-    # Path(f"./no_note_ref.json").write_text(final_json, encoding="utf-8")
-
-            # delete_repo_from_github(google_path, new_google_id, token)
-            # delete_repo_from_github(namsel_path, new_namsel_id, token)
-
-
 if __name__ == "__main__":
-    token = ""
-    pedurma_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/a7eec5e12ddce18d0ed1dbb732a42cf48f94dd09/openpecha/formatters/hfml.py"
+    batch_num = "Batch-1"
+    token = "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"
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
-    update_pedurma_pechas(pedurma_parser, token)
-
-
-
-#  special cases updated earlier than final conventions
-# D1109
-# D1115
+    update_ocr_pechas(batch_num, google_ocr_parser, token)
