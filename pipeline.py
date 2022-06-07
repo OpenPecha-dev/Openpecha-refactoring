@@ -179,7 +179,7 @@ def update_ocr_pechas(batch_num, parser, token):
                 notifier(f"{pecha_id} is {new_pecha_id}")
                 print(f"{pecha_path} is updated")
                 clean_dir(pecha_path)
-                time.sleep(6)
+                time.sleep(20)
 
 
 if __name__ == "__main__":
