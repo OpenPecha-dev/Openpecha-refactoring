@@ -169,16 +169,20 @@ def update_ocr_pechas(batch_num, parser, token):
     pecha_ids = (Path(f"./ocr-batches/{batch_num}.txt").read_text(encoding='utf-8')).splitlines()
     output_path = "./pechas"
     commit_msg = "updated to the new formate"
-    for pecha_id in pecha_ids:
-        pecha_path = download_pecha(pecha_id, output_path)
-        check = check_initial_creation_type(pecha_path)
-        if check == True:
-            new_pecha_id = reformat_opf(pecha_path, parser, token)
-            push_changes(pecha_path, commit_msg, token)
-            notifier(f"{pecha_id} is {new_pecha_id}")
-        
+    for num, pecha_id in enumerate(pecha_ids, 1):
+        if num > 1:
+            pecha_path = download_pecha(pecha_id, output_path)
+            check = check_initial_creation_type(pecha_path)
+            if check == True:
+                new_pecha_id = reformat_opf(pecha_path, parser, token)
+                push_changes(pecha_path, commit_msg, token)
+                notifier(f"{pecha_id} is {new_pecha_id}")
+                print(f"{pecha_path} is updated")
+                clean_dir(pecha_path)
+
+
 if __name__ == "__main__":
     batch_num = "Batch-1"
-    token = "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"
+    token = "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"
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
     update_ocr_pechas(batch_num, google_ocr_parser, token)

@@ -27,12 +27,16 @@ def get_new_source_metadata(meta, base_dic):
     base = {}
     curr = {}
     source_metadata = meta['source_metadata']
-    volumes = source_metadata['volumes']
-    del source_metadata['volumes']
+    if source_metadata.get("volumes", None) != None:
+        volumes = source_metadata['volumes']
+        del source_metadata['volumes']
+    else:
+        volumes = source_metadata['volume']
+        del source_metadata['volume']
     for _, base_info in base_dic.items():
         old_base = base_info['old_base']
         for _, volume_info in volumes.items():
-            if f"{old_base}.txt" == volume_info['base_file']:
+            if int(old_base[1:]) == int(volume_info['volume_number']):
                 new_base = base_info['new_base']
                 curr = {
                     'image_group_id': volume_info.get('image_group_id', ''),

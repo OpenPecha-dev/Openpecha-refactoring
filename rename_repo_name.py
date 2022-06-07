@@ -1,7 +1,6 @@
 import os
 import subprocess
 from pathlib import Path
-from turtle import down
 from openpecha import *
 from openpecha.utils import load_yaml, dump_yaml
 from openpecha.github_utils import create_github_repo
