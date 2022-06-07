@@ -18,7 +18,7 @@ t_text_list_dictionary = json.loads(response.read())
 
 
 logging.basicConfig(
-    filename="ocr_pecha_id_changed.log",
+    filename="ocr_pecha_id_batch4-13_changed.log",
     format="%(levelname)s: %(message)s",
     level=logging.INFO,
 )
@@ -168,7 +168,7 @@ def check_initial_creation_type(pecha_path):
 def update_ocr_pechas(batch_num, parser, token):
     pecha_ids = (Path(f"./ocr-batches/{batch_num}.txt").read_text(encoding='utf-8')).splitlines()
     output_path = "./pechas"
-    commit_msg = "updated to the new formate"
+    commit_msg = "updated to the new format"
     for num, pecha_id in enumerate(pecha_ids, 1):
         if num > 1:
             pecha_path = download_pecha(pecha_id, output_path)
@@ -179,10 +179,13 @@ def update_ocr_pechas(batch_num, parser, token):
                 notifier(f"{pecha_id} is {new_pecha_id}")
                 print(f"{pecha_path} is updated")
                 clean_dir(pecha_path)
+                time.sleep(6)
 
 
 if __name__ == "__main__":
-    batch_num = "Batch-1"
-    token = "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"
+    batch_list = ["Batch-6","Batch-7","Batch-8","Batch-9","Batch-10","Batch-11","Batch-12","Batch-13"]
+    token = Path('github_token').read_text()
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
-    update_ocr_pechas(batch_num, google_ocr_parser, token)
+    for batch_num in batch_list:
+        update_ocr_pechas(batch_num, google_ocr_parser, token)
+        notifier(f"{batch_num} is done with update")
