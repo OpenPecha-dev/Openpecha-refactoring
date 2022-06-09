@@ -18,7 +18,7 @@ t_text_list_dictionary = json.loads(response.read())
 
 
 logging.basicConfig(
-    filename="ocr_pecha_id_batch4-13_changed.log",
+    filename="ocr_pecha_id_batch-21-25_changed.log",
     format="%(levelname)s: %(message)s",
     level=logging.INFO,
 )
@@ -170,21 +170,22 @@ def update_ocr_pechas(batch_num, parser, token):
     output_path = "./pechas"
     commit_msg = "updated to the new format"
     for num, pecha_id in enumerate(pecha_ids, 1):
-        if num > 1:
-            pecha_path = download_pecha(pecha_id, output_path)
-            check = check_initial_creation_type(pecha_path)
-            if check == True:
-                new_pecha_id = reformat_opf(pecha_path, parser, token)
-                push_changes(pecha_path, commit_msg, token)
-                notifier(f"{pecha_id} is {new_pecha_id}")
-                print(f"{pecha_path} is updated")
-                clean_dir(pecha_path)
-                time.sleep(20)
+        # if num > 93:
+        pecha_path = download_pecha(pecha_id, output_path)
+        check = check_initial_creation_type(pecha_path)
+        if check == True:
+            new_pecha_id = reformat_opf(pecha_path, parser, token)
+            push_changes(pecha_path, commit_msg, token)
+            notifier(f"{pecha_id} is {new_pecha_id}")
+            print(f"{pecha_path} is updated")
+            clean_dir(pecha_path)
+            time.sleep(30)
 
 
 if __name__ == "__main__":
-    batch_list = ["Batch-6","Batch-7","Batch-8","Batch-9","Batch-10","Batch-11","Batch-12","Batch-13"]
-    token = Path('github_token').read_text()
+    # batch_list = ["Batch-6","Batch-7","Batch-8","Batch-9","Batch-10","Batch-11","Batch-12","Batch-13"]
+    batch_list = ["Batch-27"]
+    token = "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"
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
     for batch_num in batch_list:
         update_ocr_pechas(batch_num, google_ocr_parser, token)

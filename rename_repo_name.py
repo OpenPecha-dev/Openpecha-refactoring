@@ -40,7 +40,6 @@ def update_repo_name(pecha_path, token):
     meta = load_yaml(Path(f"{pecha_path}/{pecha_path.name}.opf/meta.yml"))
     new_pecha_id = meta['id']
     rename_opf_dir_name(new_pecha_id, pecha_path)
-    rename_meta(new_pecha_id, pecha_path)
     update_readme(new_pecha_id, pecha_path)
     rename_repo(new_pecha_id, pecha_path, token)
     return new_pecha_id
