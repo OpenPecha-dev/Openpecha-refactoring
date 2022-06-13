@@ -4,7 +4,7 @@
   <br>
 </h1>
 
-<h3 align="center">format-refactorer</h3>
+<h3 align="center">opf-refactorer</h3>
 
 
 <!-- Replace the title of the repository -->
@@ -19,8 +19,7 @@
 
 ## Description
 
-This repo updates the Openpecha format of pedurma pechas and pechas with initial_creatrion_type ocr to the new format 
-
+Updates pedurma pechas and pechas with initial_creation_type ocr to the new forma
 
 ## Owner
 
