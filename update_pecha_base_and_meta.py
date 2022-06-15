@@ -36,13 +36,19 @@ def get_new_source_metadata(meta, base_dic):
     for _, base_info in base_dic.items():
         old_base = base_info['old_base']
         for _, volume_info in volumes.items():
-            if old_base == volume_info['base_file'][:-4]:
-                new_base = base_info['new_base']
+            try:
+                if old_base == volume_info['base_file'][:-4]:
+                    new_base = base_info['new_base']
+                    order = int(volume_info['base_file'][1:-4])
+            except:
+                if int(old_base[1:]) == volume_info['volume_number']:
+                    new_base = base_info['new_base']
+                    order = int(volume_info['volume_number'])
                 curr = {
                     'image_group_id': volume_info.get('image_group_id', ''),
                     'title': volume_info.get('title', ''),
                     'total_pages':  volume_info.get('total_pages', ''),
-                    'order':  int(volume_info['base_file'][1:-4]),
+                    'order': order,
                     'base_file': f'{new_base}.txt' 
                 }
                 base[new_base]= curr
