@@ -16,7 +16,7 @@ from openpecha.core.ids import get_base_id
 def get_initial_date(pecha_path, token):
     pecha_id = pecha_path.name
     g = Github(token)
-    repo = g.get_repo(f"Openpecha/{pecha_id}")
+    repo = g.get_repo(f"Openpecha-Data/{pecha_id}")
     for commit in repo.get_commits():
         pass
     import_date = commit.raw_data['commit']['author']['date']
@@ -36,13 +36,13 @@ def get_new_source_metadata(meta, base_dic):
     for _, base_info in base_dic.items():
         old_base = base_info['old_base']
         for _, volume_info in volumes.items():
-            if int(old_base[1:]) == int(volume_info['volume_number']):
+            if old_base == volume_info['base_file'][:-4]:
                 new_base = base_info['new_base']
                 curr = {
                     'image_group_id': volume_info.get('image_group_id', ''),
                     'title': volume_info.get('title', ''),
                     'total_pages':  volume_info.get('total_pages', ''),
-                    'order':  volume_info.get('volume_number', ''),
+                    'order':  int(volume_info['base_file'][1:-4]),
                     'base_file': f'{new_base}.txt' 
                 }
                 base[new_base]= curr

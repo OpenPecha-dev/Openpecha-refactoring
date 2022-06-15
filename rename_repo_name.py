@@ -10,7 +10,7 @@ from openpecha.github_utils import create_github_repo
 def rename_repo(new_pecha_id, pecha_path, token):
     new_pecha_path = Path(f"./new_opf/{new_pecha_id}")
     os.mkdir(new_pecha_path)
-    org = "Openpecha"
+    org = "Openpecha-Data"
     remote_repo_url = create_github_repo(new_pecha_path, org, token)
     subprocess.run(f'cd {pecha_path}; git remote set-url origin {remote_repo_url}',shell=True)
 

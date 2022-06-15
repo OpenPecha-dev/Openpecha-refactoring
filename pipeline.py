@@ -18,14 +18,14 @@ t_text_list_dictionary = json.loads(response.read())
 
 
 logging.basicConfig(
-    filename="ocr_pecha_id_batch-21-25_changed.log",
+    filename="unmade_pechas_changed.log",
     format="%(levelname)s: %(message)s",
     level=logging.INFO,
 )
 
 
 config = {
-    "OP_ORG": "https://github.com/Openpecha"
+    "OP_ORG": "https://github.com/Openpecha-Data"
 }
 
 
@@ -102,14 +102,14 @@ def setup_auth(repo, org, token):
 
 def push_changes(pecha_path, commit_msg, token):
     repo = Repo(pecha_path)
-    setup_auth(repo, "Openpecha", token)
+    setup_auth(repo, "Openpecha-Data", token)
     commit(repo, commit_msg, not_includes=[],branch="master")
 
 
 def get_branch(repo, branch):
     if branch in repo.heads:
         return branch
-    return "master"
+    return "main"
 
 
 def download_pecha(pecha_id, out_path=None, branch="master"):
@@ -165,28 +165,45 @@ def check_initial_creation_type(pecha_path):
         return False
     
     
-def update_ocr_pechas(batch_num, parser, token):
-    pecha_ids = (Path(f"./ocr-batches/{batch_num}.txt").read_text(encoding='utf-8')).splitlines()
+def update_ocr_pechas(pecha_ids, parser, token):
+    # pecha_ids = (Path(f"./ocr-batches/{batch_num}.txt").read_text(encoding='utf-8')).splitlines()
     output_path = "./pechas"
     commit_msg = "updated to the new format"
     for num, pecha_id in enumerate(pecha_ids, 1):
-        # if num > 93:
-        pecha_path = download_pecha(pecha_id, output_path)
-        check = check_initial_creation_type(pecha_path)
-        if check == True:
-            new_pecha_id = reformat_opf(pecha_path, parser, token)
-            push_changes(pecha_path, commit_msg, token)
-            notifier(f"{pecha_id} is {new_pecha_id}")
-            print(f"{pecha_path} is updated")
-            clean_dir(pecha_path)
-            time.sleep(30)
+        if num > 23:
+            pecha_path = download_pecha(pecha_id, output_path)
+            check = check_initial_creation_type(pecha_path)
+            if check == True:
+                new_pecha_id = reformat_opf(pecha_path, parser, token)
+                push_changes(pecha_path, commit_msg, token)
+                notifier(f"{pecha_id} is {new_pecha_id}")
+                print(f"{pecha_path} is updated")
+                clean_dir(pecha_path)
+                time.sleep(30)
 
 
 if __name__ == "__main__":
     # batch_list = ["Batch-6","Batch-7","Batch-8","Batch-9","Batch-10","Batch-11","Batch-12","Batch-13"]
-    batch_list = ["Batch-27"]
-    token = "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"
+    batch_list = (Path(f"./ocr/pecha_without_volume_number.txt").read_text(encoding='utf-8')).splitlines()
+    token = "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"
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
-    for batch_num in batch_list:
-        update_ocr_pechas(batch_num, google_ocr_parser, token)
-        notifier(f"{batch_num} is done with update")
+    update_ocr_pechas(batch_list, google_ocr_parser, token)
+    # notifier(f"{batch_num} is done with update")
+
+
+# P000002
+# P000791
+# all volume_number not present
+# P000800
+# f36eda7db6cf463f846cedfff7cc359a
+# P7C438F34
+# only review branch
+# P000815
+#  special case, already formated
+# P004437
+# No meta
+# P005532
+# P010578
+# P010579
+# P010581
+# P010584
