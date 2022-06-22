@@ -1,9 +1,11 @@
 import shutil
+import time
 import logging
 from git import Repo
 from pathlib import Path
 from github import Github
-from yaml import safe_load
+from openpecha.utils import load_yaml
+
 
 logging.basicConfig(
     filename="Deleted_pechas.log",
@@ -48,28 +50,48 @@ def delete_repo_from_github(pecha_id, g):
     notifier(f"{pecha_id} is deleted from github")
         
 def clean_old_pechas(ids_path, pecha_dic_path, g):
-    pecha_dic = safe_load(pecha_dic_path)
+    pecha_dic = load_yaml(pecha_dic_path)
     pecha_ids = (ids_path.read_text(encoding='utf-8')).splitlines()
-    for pecha_id in pecha_ids:
-        new_pecha =  pecha_dic[pecha_id]
-        check = check_new_pecha(new_pecha, g)
-        if check ==True:
-            delete_repo_from_github(pecha_id, g)
-            print(f"{pecha_id} is deleted")
-        else:
-            notifier(f"{pecha_id} is not deleted")
+    for num, pecha_id in enumerate(pecha_ids, 1):
+        if num > 3803 :
+            new_pecha =  pecha_dic[pecha_id]
+            check = check_new_pecha(new_pecha, g)
+            if check ==True:
+                delete_repo_from_github(pecha_id, g)
+                print(f"{pecha_id} is deleted")
+                time.sleep(20)
+            else:
+                notifier(f"{pecha_id} is not deleted")
 
 def clean_new_pechas(ids_path, g):
     pecha_ids = (ids_path.read_text(encoding='utf-8')).splitlines()
     for pecha_id in pecha_ids:
         delete_repo_from_github(pecha_id, g)
         print(f"{pecha_id} is deleted")
+        time.sleep(20)
             
 if __name__ == "__main__":
-    token = ""
+    token = "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"
     g = Github(token)
     pecha_dic_path = Path(f"./clean_openpecha-data_github/pecha_dic.yml")
     old_pecha_path = Path(f"./clean_openpecha-data_github/old_pecha_delete_list.txt")
     new_pecha_path = Path(f"./clean_openpecha-data_github/new_pecha_delete_list.txt")
     clean_old_pechas(old_pecha_path, pecha_dic_path, g)
     clean_new_pechas(new_pecha_path, g)
+    
+    
+    
+    
+    # P009289
+    # P010621
+    # P001856
+    
+    
+    
+    
+    # not deleted due to error
+    # P000316
+    # P000369
+    # P000525
+    # P000457
+    # P000806

@@ -18,7 +18,7 @@ t_text_list_dictionary = json.loads(response.read())
 
 
 logging.basicConfig(
-    filename="pechas_Batch1-and-2.log",
+    filename="umade_pechas.log",
     format="%(levelname)s: %(message)s",
     level=logging.INFO,
 )
@@ -168,10 +168,14 @@ def check_initial_creation_type(pecha_path):
 def update_ocr_pechas(pecha_ids, parser, token):
     output_path = "./pechas"
     commit_msg = "updated to the new format"
+    list = ["P000004","P000005","P000006","P000007","P000316","P000369","P000457","P000791","P000800",
+            "f36eda7db6cf463f846cedfff7cc359a","P7C438F34","P000815",
+            "P004437","P005532","P010578","P010579","P010581","P010584"]
     for num, pecha_id in enumerate(pecha_ids, 1):
-        # if pecha_id in list:
-        #     continue
-        if num > 4:
+        if pecha_id in pecha_dic.keys() or pecha_id in list:
+            continue
+        if num > 371:
+        # else:
             pecha_path = download_pecha(pecha_id, output_path)
             check = check_initial_creation_type(pecha_path)
             if check == True:
@@ -185,8 +189,9 @@ def update_ocr_pechas(pecha_ids, parser, token):
 
 if __name__ == "__main__":
     # batch_list = ["Batch-6","Batch-7","Batch-8","Batch-9","Batch-10","Batch-11","Batch-12","Batch-13"]
-    batch_list = (Path(f"./ocr-batches/Batch-1.txt").read_text(encoding='utf-8')).splitlines()
-    token = 
+    batch_list = (Path(f"./ocr/unmade_pechas.txt").read_text(encoding='utf-8')).splitlines()
+    token = "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"
+    pecha_dic = load_yaml(Path(f"./pecha_dic.yml"))
     google_ocr_parser = "https://github.com/OpenPecha-dev/openpecha-toolkit/blob/231bba39dd1ba393320de82d4d08a604aabe80fc/openpecha/formatters/google_orc.py"
     update_ocr_pechas(batch_list, google_ocr_parser, token)
     # notifier(f"{batch_num} is done with update")
@@ -197,6 +202,7 @@ if __name__ == "__main__":
 # P000004
 # P000005 has meta error after update
 # P000006 cant push
+# P000316 cant push
 
 
 
